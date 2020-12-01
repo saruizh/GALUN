@@ -1,10 +1,10 @@
-prueba1
+[prueba 1] // debe leerse prueba 1 en la lista
 prueba 2 
-prueba 3
+[prueba 3
 prueba 4 
-prueba 5
+p[rueba 5
  while  ñ    
-	while   ñ
+  while   ñ
 
 +++
 <

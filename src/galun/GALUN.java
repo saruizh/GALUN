@@ -76,122 +76,45 @@ public class GALUN {
             }
         }
 
-        //se leen las string en la lista
-        for (int i = 0; i < lineasArchivo.size(); i++) {
-
-            System.out.println(lineasArchivo.get(i));
-
-            for (int j = 0; j < lineasArchivo.get(i).length(); j++) {
-
-                //busca palabra reservada while 
-                String v1 = "";
-                String w = "";
-                String h = "";
-                String i1 = "";
-                String l = "";
-                String e = "";
-                String v2 = "";
-                if ((j + 4) < lineasArchivo.get(i).length()) {
+        for (int i = 0; i < lineasArchivo.size(); i++) {            
+            for (int j = 0; j < lineasArchivo.get(i).length(); j++){
+                String a="";
+                if(j==0){
+                    if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
+                        j+=1;
+                        while(true){
+                            if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
+                                //guardo a en la lista
+                                break;
+                            }
+                            else if(j+1==lineasArchivo.get(i).length()){
+                                break;
+                            }
+                            else{
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
+                                //System.out.print(a);
+                                j+=1;
+                            }
+                        }
+                    }
+                }
+                else if(true){
+                    
+                }
+                else{
+                    
+                }
+                System.out.print(a);
+                
+                
+                
+                /*if (j==8) {
                     //v1 = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    w = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    h = String.valueOf(lineasArchivo.get(i).charAt(j + 1));
-                    i1 = String.valueOf(lineasArchivo.get(i).charAt(j + 2));
-                    l = String.valueOf(lineasArchivo.get(i).charAt(j + 3));
-                    e = String.valueOf(lineasArchivo.get(i).charAt(j + 4));
-                    //v2 = String.valueOf(lineasArchivo.get(i).charAt(j + 6));
-
-                }
-
-                if (w.equals("w") && h.equals("h") && i1.equals("i") && l.equals("l") && e.equals("e")) {
-                    listaA.add("while");
-                    listaB.add("Palabra reservada");
-
-                }
-                
-                
-                //Lee la palabra reservada for
-                String f = "";
-                String o = "";
-                String r = "";
-                if ((j + 3) < lineasArchivo.get(i).length()) {
-
-                    f = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    o = String.valueOf(lineasArchivo.get(i).charAt(j + 1));
-                    r = String.valueOf(lineasArchivo.get(i).charAt(j + 2));
-
-                }
-                if (f.equals("f") && h.equals("o") && i1.equals("r") ) {
-                    listaA.add("for");
-                    listaB.add("Palabra reservada");
-
-                }
-                
-                //lee la palabra reservada if
-                String i2 = "";
-                String f2 = "";
-               
-                if ((j + 1) < lineasArchivo.get(i).length()) {
-
-                    i2 = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    f2 = String.valueOf(lineasArchivo.get(i).charAt(j + 1));
-                    
-
-                }
-                if (i2.equals("i") && f2.equals("f")  ) {
-                    listaA.add("if");
-                    listaB.add("Palabra reservada");
-
-                }
-                
-                //lee la palabra reservada else
-                
-                String e1 = "";
-                String l2 = "";
-                String s2 = "";
-                String e2 = "";
-               
-                if ((j + 3) < lineasArchivo.get(i).length()) {
-
-                    e1 = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    l2 = String.valueOf(lineasArchivo.get(i).charAt(j+1));
-                    s2 = String.valueOf(lineasArchivo.get(i).charAt(j+2));
-                    e2 = String.valueOf(lineasArchivo.get(i).charAt(j+3));
-                    
-
-                }
-                if (e1.equals("e") && l2.equals("l")&& s2.equals("s")&& e2.equals("e")  ) {
-                    listaA.add("else");
-                    listaB.add("Palabra reservada");
-
-                }
-
-                //busca cualquier operador aritmetico
-                String opa = String.valueOf(lineasArchivo.get(i).charAt(j));
-                if (opa.equals("+") || opa.equals("-") || opa.equals("*") || opa.equals("/")) {
-                    listaA.add(opa);
-                    listaB.add("Operador aritmetico");
-                }
-
-                //busca cualquier operador logico 
-                String opl = String.valueOf(lineasArchivo.get(i).charAt(j));
-                if (opl.equals("<") || opl.equals("=") || opl.equals(">")) {
-                    listaA.add(opl);
-                    listaB.add("Operador logico");
-                }
-
+                    //w = String.valueOf(lineasArchivo.get(i).charAt(j));
+                    System.out.print(lineasArchivo.get(i).charAt(j));
+                }*/
             }
         }
-        System.out.println("Lista A: ");
-        for (int i = 0; i < listaA.size(); i++) {
-
-            System.out.println(listaA.get(i));
-
-        }
-        System.out.println("Lista B: ");
-        for (int i = 0; i < listaB.size(); i++) {
-
-            System.out.println(listaB.get(i));
-
-        }
+        
     }    
 }
