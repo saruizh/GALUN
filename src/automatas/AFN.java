@@ -78,14 +78,20 @@ public class AFN{
         }
     }
 //  Se definen las funciones conjuncion y disyuncion de manera publica y estatica 
-    public static final AFN disyuncion(String... expresion) {
+    public static final AFN disyuncionString(String... expresion) {
         AFN exp = fromString(expresion[0]) ;
         for (int i = 1; i < expresion.length; i++) {
             exp = disyuncion(exp,re(expresion[i])) ;
         }
         return exp ;
     }
-
+    public static final AFN disyuncionAFN(AFN... expresion) {
+        AFN exp = expresion[0] ;
+        for (int i = 1; i < expresion.length; i++) {
+            exp = disyuncion(exp,re(expresion[i])) ;
+        }
+        return exp ;
+    }
     public static final AFN conjuncion(Object... rexps) {
         AFN exp = vacia() ;
         for (int i = 0; i < rexps.length; i++) {
@@ -93,6 +99,7 @@ public class AFN{
         }
         return exp ;
     }
+    
 //  Esta funcion genera un afn dado un String
     public static final AFN fromString(String str) {
         if (str.length() == 0){
