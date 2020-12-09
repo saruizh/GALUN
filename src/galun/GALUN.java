@@ -49,6 +49,7 @@ public class GALUN {
         try {
             // Apertura del fichero y creacion de BufferedReader para poder
             // hacer una lectura comoda (disponer del metodo readLine()).
+            //archivo = new File("C:\\Reglas.txt"); 
             archivo = new File(ruta);
             fr = new FileReader(archivo);
             br = new BufferedReader(fr);
@@ -75,36 +76,68 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
-
-        for (int i = 0; i < lineasArchivo.size(); i++) {            
+       
+        for (int i = 0; i < lineasArchivo.size(); i++) {  
+             ArrayList<ArrayList<String>> tokens = new ArrayList<>();
+            String a="";
             for (int j = 0; j < lineasArchivo.get(i).length(); j++){
-                String a="";
-                if(j==0){
+                
                     if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
-                        j+=1;
-                        while(true){
-                            if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
-                                //guardo a en la lista
+                       while(true){
+                             if(j==lineasArchivo.get(i).length()){
                                 break;
                             }
-                            else if(j+1==lineasArchivo.get(i).length()){
-                                break;
+                             
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                               temp.add("identificador");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                               break;
                             }
                             else{
                                 a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
-                                //System.out.print(a);
-                                j+=1;
+                               
                             }
-                        }
+                         j++;
                     }
-                }
-                else if(true){
-                    
-                }
-                else{
-                    
-                }
-                System.out.print(a);
+                    }
+                    else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("&")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("and");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                               
+                            }
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("*")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("kleene");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                             
+                            }
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("|")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("or");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                              
+                            }
+                           
+                        
+                  
+                
                 
                 
                 
@@ -113,7 +146,12 @@ public class GALUN {
                     //w = String.valueOf(lineasArchivo.get(i).charAt(j));
                     System.out.print(lineasArchivo.get(i).charAt(j));
                 }*/
+                System.out.println(tokens.toString());
             }
+            
+            
+            System.out.println("archivo leído");
+            
         }
         
     }    
