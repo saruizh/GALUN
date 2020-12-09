@@ -10,8 +10,11 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import automatas.*;
 
 import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  *
@@ -22,24 +25,24 @@ public class GALUN {
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String[] args) {
-        //File input=new File("input"); Proyecto en blanco
+        //File input=new File("input"); //Proyecto en blanco;
         //System.out.print(input.getAbsolutePath());
         //System.out.print(input.exists());
+        ArrayList <AFN> afns = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
 
         // entrada de una cadena
         System.out.println("Ingrese la ruta : ");
-
-        String ruta = sc.nextLine();
-
-        leerArchivo(ruta); 
+        String ruta1 = sc.nextLine();
+        System.out.println("Ingrese la ruta del codigo : ");
+        String ruta2 = sc.nextLine();
+        afns=automatas(leerArchivo(ruta1));
+        leerCodigo(ruta2);
     }
-    public static void leerArchivo(String ruta) {
-
+    public static List<String> leerArchivo(String ruta) {
         List<String> lineasArchivo = new ArrayList<>();
-        List<String> listaA = new ArrayList<>();
-        List<String> listaB = new ArrayList<>();
 
         File archivo = null;
         FileReader fr = null;
@@ -75,46 +78,80 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
+        return lineasArchivo;
+    }
+    public static List<String> leerCodigo(String ruta) {
+        List<String> lineasArchivo = new ArrayList<>();
+        List<String> palabras = new ArrayList<>();
 
-        for (int i = 0; i < lineasArchivo.size(); i++) {            
-            for (int j = 0; j < lineasArchivo.get(i).length(); j++){
-                String a="";
-                if(j==0){
-                    if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
-                        j+=1;
-                        while(true){
-                            if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
-                                //guardo a en la lista
-                                break;
-                            }
-                            else if(j+1==lineasArchivo.get(i).length()){
-                                break;
-                            }
-                            else{
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
-                                //System.out.print(a);
-                                j+=1;
-                            }
-                        }
-                    }
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
+
+        //Se lee las lineas del archivo y se extraen los datos
+        try {
+            // Apertura del fichero y creacion de BufferedReader para poder
+            // hacer una lectura comoda (disponer del metodo readLine()).
+            archivo = new File(ruta);
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
+
+            // Lectura del fichero
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                lineasArchivo.add(linea); // añade archivo a la lista 
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // En el finally cerramos el fichero, para asegurarnos
+            // que se cierra tanto si todo va bien como si salta 
+            // una excepcion.
+            try {
+                if (null != fr) {
+                    fr.close();
                 }
-                else if(true){
-                    
-                }
-                else{
-                    
-                }
-                System.out.print(a);
-                
-                
-                
-                /*if (j==8) {
-                    //v1 = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    //w = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    System.out.print(lineasArchivo.get(i).charAt(j));
-                }*/
+            } catch (Exception e2) {
+                e2.printStackTrace();
             }
         }
+        palabras=ReadLine(lineasArchivo);
+        return palabras;
+    }
+    
+    public static ArrayList<AFN> automatas( List<String> lineasArchivo){
+        return null;
+    }
+    public static void tokens(){
         
-    }    
+    }
+    public static List<String> ReadLine(List<String> lineasArchivo){
+        List<String> palabras= new ArrayList<>();
+        int length =  lineasArchivo.size();
+        for(int i =0;i<length;i++){
+            String string = lineasArchivo.get(i);
+            if(string.contains("//")){
+                lineasArchivo.remove(i);
+                String sep = "//";
+                String[] parts = string.split(sep);
+                lineasArchivo.add(i,parts[0]);
+            }
+        }
+        for(int i =0;i<length;i++){
+            String string = lineasArchivo.get(i);
+            String sep = "\\s+";
+            String[] parts = string.trim().split(sep);
+            for(int j =0;j<parts.length;j++){
+                String a= parts[j];
+                palabras.add(a);
+            }
+        }
+        Set<String> set = new LinkedHashSet<>();  
+        set.addAll(palabras); 
+        palabras.clear(); 
+        palabras.addAll(set);
+        return palabras;
+    }
 }
