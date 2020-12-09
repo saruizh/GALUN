@@ -194,6 +194,10 @@ public class GALUN {
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
+            
+            
+            System.out.println("archivo leído");
+            
         }
         palabras=ReadLine(lineasArchivo);
         return palabras;
