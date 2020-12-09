@@ -27,22 +27,23 @@ public class GALUN {
      */
     
     public static void main(String[] args) {
-        //File input=new File("input"); //Proyecto en blanco;
+        //File input=new File("input"); Proyecto en blanco
         //System.out.print(input.getAbsolutePath());
         //System.out.print(input.exists());
-        ArrayList <AFN> afns = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
 
         // entrada de una cadena
         System.out.println("Ingrese la ruta : ");
-        String ruta1 = sc.nextLine();
-        System.out.println("Ingrese la ruta del codigo : ");
-        String ruta2 = sc.nextLine();
-        afns=automatas(leerArchivo(ruta1));
-        leerCodigo(ruta2);
+
+        String ruta = sc.nextLine();
+
+        leerArchivo(ruta); 
     }
-    public static List<String> leerArchivo(String ruta) {
+    public static void leerArchivo(String ruta) {
+
         List<String> lineasArchivo = new ArrayList<>();
+        List<String> listaA = new ArrayList<>();
+        List<String> listaB = new ArrayList<>();
 
         File archivo = null;
         FileReader fr = null;
@@ -52,6 +53,7 @@ public class GALUN {
         try {
             // Apertura del fichero y creacion de BufferedReader para poder
             // hacer una lectura comoda (disponer del metodo readLine()).
+            //archivo = new File("C:\\Reglas.txt"); 
             archivo = new File(ruta);
             fr = new FileReader(archivo);
             br = new BufferedReader(fr);
@@ -78,8 +80,84 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
-        return lineasArchivo;
-    }
+       
+        for (int i = 0; i < lineasArchivo.size(); i++) {  
+             ArrayList<ArrayList<String>> tokens = new ArrayList<>();
+            String a="";
+            for (int j = 0; j < lineasArchivo.get(i).length(); j++){
+                
+                    if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
+                       while(true){
+                             if(j==lineasArchivo.get(i).length()){
+                                break;
+                            }
+                             
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                               temp.add("identificador");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                               break;
+                            }
+                            else{
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
+                               
+                            }
+                         j++;
+                    }
+                    }
+                    else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("&")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("and");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                               
+                            }
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("*")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("kleene");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                             
+                            }
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("|")){
+                                //guardo a en la lista
+                               ArrayList<String> temp = new ArrayList<>();
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("or");
+                               temp.add(a);
+                               tokens.add(temp);
+                               a="";
+                              
+                            }
+                           
+                        
+                  
+                
+                
+                
+                
+                /*if (j==8) {
+                    //v1 = String.valueOf(lineasArchivo.get(i).charAt(j));
+                    //w = String.valueOf(lineasArchivo.get(i).charAt(j));
+                    System.out.print(lineasArchivo.get(i).charAt(j));
+                }*/
+                System.out.println(tokens.toString());
+            }
+            
+            
+            System.out.println("archivo leído");
+            
+        }
+    }    
     public static List<String> leerCodigo(String ruta) {
         List<String> lineasArchivo = new ArrayList<>();
         List<String> palabras = new ArrayList<>();
@@ -119,13 +197,6 @@ public class GALUN {
         }
         palabras=ReadLine(lineasArchivo);
         return palabras;
-    }
-    
-    public static ArrayList<AFN> automatas( List<String> lineasArchivo){
-        return null;
-    }
-    public static void tokens(){
-        
     }
     public static List<String> ReadLine(List<String> lineasArchivo){
         List<String> palabras= new ArrayList<>();
