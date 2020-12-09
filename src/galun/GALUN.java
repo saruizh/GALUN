@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import automatas.*;
+import static automatas.AFN.*;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -33,11 +34,47 @@ public class GALUN {
         Scanner sc = new Scanner(System.in);
 
         // entrada de una cadena
+        /*
         System.out.println("Ingrese la ruta : ");
 
         String ruta = sc.nextLine();
 
-        leerArchivo(ruta); 
+        leerArchivo(ruta);
+        */
+        
+        
+        
+        
+        /*       EJEMPLO       */
+        //Ejemplos de expresiones de entrada
+        /*
+         // c&[a]*| d&[a]* //retorna Rtoken1
+        AFN e1 = disyuncionAFN(conjuncion("d",kleene(fromString("a"))),conjuncion("c",kleene(fromString("a")))) ;
+        e1.setToken("Rtoken1");
+        // [[aa]|[bb]]*&a  //retorna Rtoken2
+        AFN e2 = conjuncion(kleene(disyuncionString("aa","bb")),"a") ;
+        e2.setToken("Rtoken2");
+        */
+        
+        //Ejemplo De leida y salida
+        /*
+        List<String> codigoEjemplo = new ArrayList<>();
+        codigoEjemplo.add("aabba");
+        codigoEjemplo.add("aaaaaaaaa");
+        codigoEjemplo.add("aaaaaaaa");
+        codigoEjemplo.add("caaaaaa");
+        codigoEjemplo.add("daaaaaa");
+        codigoEjemplo.add("adaaaa");
+        codigoEjemplo.add("aaaabba");
+        codigoEjemplo.add("X");
+        ArrayList<AFN> afnEjemplo = new ArrayList<>();
+        afnEjemplo.add(e1);
+        afnEjemplo.add(e2);
+        List<String> output = result(codigoEjemplo,afnEjemplo);
+        for(int i =0; i<output.size();i++){
+            System.out.println(output.get(i));
+        }
+        */
     }
     public static void leerArchivo(String ruta) {
 
@@ -138,12 +175,6 @@ public class GALUN {
                                a="";
                               
                             }
-                           
-                        
-                  
-                
-                
-                
                 
                 /*if (j==8) {
                     //v1 = String.valueOf(lineasArchivo.get(i).charAt(j));
@@ -207,6 +238,7 @@ public class GALUN {
         int length =  lineasArchivo.size();
         for(int i =0;i<length;i++){
             String string = lineasArchivo.get(i);
+            // se asumio el comentario como si fuera // pero eso lo dicta el usuario
             if(string.contains("//")){
                 lineasArchivo.remove(i);
                 String sep = "//";
@@ -228,5 +260,32 @@ public class GALUN {
         palabras.clear(); 
         palabras.addAll(set);
         return palabras;
+    }
+    public static List<String> result(List<String> palabras,ArrayList<AFN> afns){
+        List<String> listaA = new ArrayList<>();
+        int nafns=afns.size();
+        int npalabras=palabras.size();
+        boolean si=false;
+        for(int i =0;i<npalabras;i++){
+            for(int j =0;j<nafns;j++){
+                AFN actual = afns.get(j);
+                if(actual.acepta(palabras.get(i))){
+                    String str =String.join(" = ",palabras.get(i),actual.token);
+                    listaA.add(str);
+                    si=true;
+                    break;
+                }else{
+                    si=false;
+                }
+                
+            }
+            if(!si){
+                String str =String.join(" = ",palabras.get(i),"ERROR: No definido");
+                listaA.add(str);
+                si=false;
+            }
+            
+        }
+        return listaA;
     }
 }

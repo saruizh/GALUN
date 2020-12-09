@@ -12,7 +12,7 @@ package automatas;
 public class AFN{
     public EstadoAFN entrada ;
     public EstadoAFN salida ;
-
+    public String token=" ";
     public AFN(EstadoAFN entry, EstadoAFN exit) {
     	this.entrada = entry ;
     	this.salida  = exit;
@@ -107,5 +107,11 @@ public class AFN{
         }else{
             return conjuncion(re(str.charAt(0)),fromString(str.substring(1))) ;
         }
+    }
+    public String getToken(){
+        return this.token;
+    }
+    public void setToken(String token){
+        this.token=token;
     }
 }
