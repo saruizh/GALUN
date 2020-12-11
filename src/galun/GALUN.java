@@ -76,37 +76,66 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
-       
+        
         for (int i = 0; i < lineasArchivo.size(); i++) {  
-             ArrayList<ArrayList<String>> tokens = new ArrayList<>();
+            ArrayList<ArrayList<String>> tokens = new ArrayList<>();
             String a="";
             for (int j = 0; j < lineasArchivo.get(i).length(); j++){
-                
+                ArrayList<String> temp = new ArrayList<>();
                     if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
                        while(true){
+                            
                              if(j==lineasArchivo.get(i).length()){
                                 break;
                             }
                              
+                             else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("&")){
+                                //guardo a en la lista
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("and");
+                               temp.add(a);
+                               a="";
+                            }
+                           
+                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("|")){
+                                //guardo a en la lista
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
+                               temp.add("or");
+                               temp.add(a);
+                               a="";
+                              
+                            }
                             else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
                                 //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                               temp.add("identificador");
+                              
+                               if(String.valueOf(lineasArchivo.get(i).charAt(j+1)).equals("*")){
+                                //guardo a en la lista
+                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j+1));
+                               temp.add("kleene");
                                temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                               break;
                             }
+                               tokens.add(temp);
+                              temp= new ArrayList<>();
+                              a="";
+                              break;
+                            } else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
+                               
+                            } 
                             else{
                                 a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
-                               
+                               temp.add("identificador");
+                               temp.add(a);
+                               /*if(!String.valueOf(lineasArchivo.get(i).charAt(j+1)).equals("]")){
+                               tokens.add(temp);
+                               }*/
+                              a="";
                             }
                          j++;
                     }
                     }
                     else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("&")){
                                 //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
+                               temp = new ArrayList<>();
                                 a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
                                temp.add("and");
                                temp.add(a);
@@ -114,19 +143,10 @@ public class GALUN {
                                a="";
                                
                             }
-                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("*")){
-                                //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
-                               temp.add("kleene");
-                               temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                             
-                            }
+                           
                             else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("|")){
                                 //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
+                                temp = new ArrayList<>();
                                 a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
                                temp.add("or");
                                temp.add(a);
@@ -135,7 +155,12 @@ public class GALUN {
                               
                             }
                            
-                        
+                        else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
+                                //guardo a en la lista
+                              
+                          
+                              break;
+                            } 
                   
                 
                 
@@ -146,13 +171,13 @@ public class GALUN {
                     //w = String.valueOf(lineasArchivo.get(i).charAt(j));
                     System.out.print(lineasArchivo.get(i).charAt(j));
                 }*/
-                System.out.println(tokens.toString());
+               
             }
             
-            
+             
+         System.out.println(tokens.toString());
             System.out.println("archivo leído");
-            
+           
         }
-        
     }    
 }
