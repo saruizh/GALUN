@@ -34,15 +34,21 @@ public class GALUN {
         Scanner sc = new Scanner(System.in);
 
         // entrada de una cadena
-        /*
-        System.out.println("Ingrese la ruta : ");
+        //C:\Hello\test1\input.txt
+        System.out.println("Ingrese la ruta del primer input: ");
 
-        String ruta = sc.nextLine();
+        String ruta1 = sc.nextLine();
+        
+        System.out.println("Ingrese la ruta del segundo input: ");
 
-        leerArchivo(ruta);
-        */
+        String ruta2 = sc.nextLine();
         
-        
+        ArrayList<AFN> afns = leerArchivo(ruta1);
+        List<String> codigo = leerCodigo(ruta2);
+        List<String> output = result(codigo,afns);
+        for(int i =0; i<output.size();i++){
+            System.out.println(output.get(i));
+        }
         
         
         /*       EJEMPLO       */
@@ -54,33 +60,32 @@ public class GALUN {
         // [[aa]|[bb]]*&a  //retorna Rtoken2
         AFN e2 = conjuncion(kleene(disyuncionString("aa","bb")),"a") ;
         e2.setToken("Rtoken2");
-        */
         
         //Ejemplo De leida y salida
-        /*
+        
         List<String> codigoEjemplo = new ArrayList<>();
         codigoEjemplo.add("aabba");
         codigoEjemplo.add("aaaaaaaaa");
-        codigoEjemplo.add("aaaaaaaa");
-        codigoEjemplo.add("caaaaaa");
-        codigoEjemplo.add("daaaaaa");
+        codigoEjemplo.add("aaaaabbbbb");
+        codigoEjemplo.add("a");
+        codigoEjemplo.add("daaaaaa//aaaaaa");
         codigoEjemplo.add("adaaaa");
         codigoEjemplo.add("aaaabba");
+        codigoEjemplo.add("a");
         codigoEjemplo.add("X");
-        ArrayList<AFN> afnEjemplo = new ArrayList<>();
+        ArrayList<AFN> afnEjemplo = leerArchivo(ruta);
         afnEjemplo.add(e1);
         afnEjemplo.add(e2);
+        
         List<String> output = result(codigoEjemplo,afnEjemplo);
         for(int i =0; i<output.size();i++){
             System.out.println(output.get(i));
         }
         */
     }
-    public static void leerArchivo(String ruta) {
-
+    public static ArrayList<AFN> leerArchivo(String ruta) {
+        ArrayList<AFN> afns = new ArrayList<>();
         List<String> lineasArchivo = new ArrayList<>();
-        List<String> listaA = new ArrayList<>();
-        List<String> listaB = new ArrayList<>();
 
         File archivo = null;
         FileReader fr = null;
@@ -117,78 +122,122 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
-       
-        for (int i = 0; i < lineasArchivo.size(); i++) {  
-             ArrayList<ArrayList<String>> tokens = new ArrayList<>();
-            String a="";
-            for (int j = 0; j < lineasArchivo.get(i).length(); j++){
-                
-                    if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("[")){
-                       while(true){
-                             if(j==lineasArchivo.get(i).length()){
-                                break;
-                            }
-                             
-                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("]")){
-                                //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                               temp.add("identificador");
-                               temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                               break;
-                            }
-                            else{
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));//concatena palabra
-                               
-                            }
-                         j++;
-                    }
-                    }
-                    else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("&")){
-                                //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
-                               temp.add("and");
-                               temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                               
-                            }
-                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("*")){
-                                //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
-                               temp.add("kleene");
-                               temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                             
-                            }
-                            else if(String.valueOf(lineasArchivo.get(i).charAt(j)).equals("|")){
-                                //guardo a en la lista
-                               ArrayList<String> temp = new ArrayList<>();
-                                a=a+String.valueOf(lineasArchivo.get(i).charAt(j));
-                               temp.add("or");
-                               temp.add(a);
-                               tokens.add(temp);
-                               a="";
-                              
-                            }
-                
-                /*if (j==8) {
-                    //v1 = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    //w = String.valueOf(lineasArchivo.get(i).charAt(j));
-                    System.out.print(lineasArchivo.get(i).charAt(j));
-                }*/
-                System.out.println(tokens.toString());
-            }
-            
-            
-            System.out.println("archivo leído");
-            
+        for (int i = 0; i < lineasArchivo.size(); i++) {
+           AFN newAFN=syntax(lineasArchivo.get(i));
+           newAFN.setToken("a1");
+           afns.add(newAFN);
         }
+        return afns;
     }    
+    public static AFN syntax(String in){
+        String derecha="";
+        String izquierda="";
+        String a="";
+        for (int j = 0; j < in.length(); j++){
+            int parcount=0;
+            if(in.charAt(j)=='('){
+                parcount++;
+                j++;
+                while(true){
+                    if(j==in.length()){
+                        break;
+                    }else if(String.valueOf(in.charAt(j)).equals("(")){
+                        a=a+String.valueOf(in.charAt(j));
+                        parcount++;
+                    }else if(String.valueOf(in.charAt(j)).equals(")")){
+                        if(parcount==1){
+                           izquierda=a;
+                           a="";
+                           break;
+                        }else{
+                            a=a+String.valueOf(in.charAt(j));
+                            parcount--;
+                        }
+                    }
+                    else{
+                        a=a+String.valueOf(in.charAt(j));//concatena palabra
+                    }
+                    j++;
+                }
+              
+                if(j==in.length()-1){
+                    return syntax(izquierda);
+                }else{
+                    j++;
+                    switch (in.charAt(j)) {
+                        case '*':
+                            if(j==in.length()-1){
+                                return kleene(syntax(izquierda));
+                            }else{
+                                j++;
+                                if(in.charAt(j)=='&'){
+                                    derecha=in.substring(j+1);
+                                    return conjuncion(kleene(syntax(izquierda)),syntax(derecha));
+                                }else if(in.charAt(j)=='|'){
+                                    derecha=in.substring(j+1);
+                                    return disyuncionAFN(kleene(syntax(izquierda)),syntax(derecha));
+                                }
+                            }   break;
+                        case '&':
+                            derecha=in.substring(j+1);
+                            return conjuncion(syntax(izquierda),syntax(derecha));
+                        case '|':
+                            derecha=in.substring(j+1);
+                            return disyuncionAFN(syntax(izquierda),syntax(derecha));
+                        default:
+                            break;
+                    }
+                }
+            }
+            if(in.charAt(j)=='['){
+                j++;
+                while(true){
+                        if(j==in.length()){
+                            break;
+                        }        
+                        else if(String.valueOf(in.charAt(j)).equals("]")){
+                           izquierda=a;
+                           a="";
+                           break;
+                        }
+                        else{
+                            a=a+String.valueOf(in.charAt(j));//concatena palabra
+                        }
+                     j++;
+                }
+                if(j==in.length()-1){
+                    System.out.println(j);
+                    return fromString(izquierda);
+                }else{
+                    j++;
+                    switch (in.charAt(j)) {
+                        case '*':
+                            if(j==in.length()-1){
+                                return kleene(fromString(izquierda));
+                            }else{
+                                j++;
+                                if(in.charAt(j)=='&'){
+                                    derecha=in.substring(j+1);
+                                    return conjuncion(kleene(fromString(izquierda)),syntax(derecha));
+                                }else if(in.charAt(j)=='|'){
+                                    derecha=in.substring(j+1);
+                                    return disyuncionAFN(kleene(fromString(izquierda)),syntax(derecha));
+                                }
+                            }   break;
+                        case '&':
+                            derecha=in.substring(j+1);
+                            return conjuncion(fromString(izquierda),syntax(derecha));
+                        case '|':
+                            derecha=in.substring(j+1);
+                            return disyuncionAFN(fromString(izquierda),syntax(derecha));
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public static List<String> leerCodigo(String ruta) {
         List<String> lineasArchivo = new ArrayList<>();
         List<String> palabras = new ArrayList<>();
@@ -236,16 +285,6 @@ public class GALUN {
     public static List<String> ReadLine(List<String> lineasArchivo){
         List<String> palabras= new ArrayList<>();
         int length =  lineasArchivo.size();
-        for(int i =0;i<length;i++){
-            String string = lineasArchivo.get(i);
-            // se asumio el comentario como si fuera // pero eso lo dicta el usuario
-            if(string.contains("//")){
-                lineasArchivo.remove(i);
-                String sep = "//";
-                String[] parts = string.split(sep);
-                lineasArchivo.add(i,parts[0]);
-            }
-        }
         for(int i =0;i<length;i++){
             String string = lineasArchivo.get(i);
             String sep = "\\s+";
