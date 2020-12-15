@@ -50,38 +50,6 @@ public class GALUN {
         for (int i = 0; i < output.size(); i++) {
             System.out.println(output.get(i));
         }
-
-        /*       EJEMPLO       */
-        //Ejemplos de expresiones de entrada
-        /*
-         // c&[a]*| d&[a]* //retorna Rtoken1
-        AFN e1 = disyuncionAFN(conjuncion("d",kleene(fromString("a"))),conjuncion("c",kleene(fromString("a")))) ;
-        e1.setToken("Rtoken1");
-        // [[aa]|[bb]]*&a  //retorna Rtoken2
-        AFN e2 = conjuncion(kleene(disyuncionString("aa","bb")),"a") ;
-        e2.setToken("Rtoken2");
-        
-        //Ejemplo De leida y salida
-        
-        List<String> codigoEjemplo = new ArrayList<>();
-        codigoEjemplo.add("aabba");
-        codigoEjemplo.add("aaaaaaaaa");
-        codigoEjemplo.add("aaaaabbbbb");
-        codigoEjemplo.add("a");
-        codigoEjemplo.add("daaaaaa//aaaaaa");
-        codigoEjemplo.add("adaaaa");
-        codigoEjemplo.add("aaaabba");
-        codigoEjemplo.add("a");
-        codigoEjemplo.add("X");
-        ArrayList<AFN> afnEjemplo = leerArchivo(ruta);
-        afnEjemplo.add(e1);
-        afnEjemplo.add(e2);
-        
-        List<String> output = result(codigoEjemplo,afnEjemplo);
-        for(int i =0; i<output.size();i++){
-            System.out.println(output.get(i));
-        }
-         */
     }
 
     public static ArrayList<AFN> leerArchivo(String ruta) {
@@ -106,30 +74,15 @@ public class GALUN {
 
             while ((linea = br.readLine()) != null) {
                 if (linea.contains("[a-z]")) {
-                    String az = "([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])";
-                    lineasArchivo.add(az);
-                   
-
-                } else if (linea.contains("[a-z]*")) {
-                    String az2 = "([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])*";
-                    lineasArchivo.add(az2);
-                    
-                }else if (linea.contains("[0-9]*")) {
-                    String num2 = "([0]|[1]|[2]|[3]|[4]|[5]|[6]|[7]|[8]|[9])*";
-                    lineasArchivo.add(num2);
-                    
-                } else if (linea.contains("[0-9]")) {
-                    String num = "([0]|[1]|[2]|[3]|[4]|[5]|[6]|[7]|[8]|[9])";
-                    lineasArchivo.add(num);
+                    lineasArchivo.add(linea.replace("[a-z]","([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])"));
+                }else if (linea.contains("[A-Z]")) {
+                    lineasArchivo.add(linea.replace("[A-Z]","([A]|[B]|[C]|[D]|[E]|[F]|[G]|[H]|[I]|[J]|[K]|[L]|[M]|[N]|[O]|[P]|[Q]|[R]|[S]|[T]|[U]|[V]|[X]|[Y]|[W]|[Z])"));
+                }else if (linea.contains("[0-9]")) {
+                    lineasArchivo.add(linea.replace("[0-9]","([0]|[1]|[2]|[3]|[4]|[5]|[6]|[7]|[8]|[9])"));
                 } else {
-                    System.out.println(linea);
-                   
                     lineasArchivo.add(linea); // añade archivo a la lista 
-                }
-
-                lineasArchivo.add(linea); // añade archivo a la lista 
+                } 
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -145,9 +98,21 @@ public class GALUN {
             }
         }
         for (int i = 0; i < lineasArchivo.size(); i++) {
-            AFN newAFN = syntax(lineasArchivo.get(i));
-            newAFN.setToken("a1");
-            afns.add(newAFN);
+           String safn=lineasArchivo.get(i);
+           String sep = "//";
+           String[] parts = safn.trim().split(sep);
+           AFN newAFN=syntax(parts[0].trim());
+           if(parts[1].contains("retornar")){
+               String[] part = parts[1].trim().split("\\s+");
+               newAFN.setToken(part[1]);
+               if(part[1].equals("comentario")){
+                   
+               }
+           }else{
+               System.out.println("Token definido incorrectamente");
+           }
+           
+           afns.add(newAFN);
         }
         return afns;
     }
@@ -227,7 +192,6 @@ public class GALUN {
                     j++;
                 }
                 if (j == in.length() - 1) {
-                    System.out.println(j);
                     return fromString(izquierda);
                 } else {
                     j++;
@@ -342,7 +306,6 @@ public class GALUN {
                 } else {
                     si = false;
                 }
-
             }
             if (!si) {
                 String str = String.join(" = ", palabras.get(i), "ERROR: No definido");
