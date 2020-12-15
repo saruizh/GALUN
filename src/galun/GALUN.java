@@ -39,14 +39,22 @@ public class GALUN {
         System.out.println("Ingrese la ruta del primer input: ");
 
         String ruta1 = sc.nextLine();
-
+        //Entrada de los ejemplos 
         System.out.println("Ingrese la ruta del segundo input: ");
 
         String ruta2 = sc.nextLine();
-
+        // se crea la  lista de el AFN
         ArrayList<AFN> afns = leerArchivo(ruta1);
+        //Se leen os ejemplos
         List<String> codigo = leerCodigo(ruta2);
+        //Se guarda el output en la lista que se va a escribir
         List<String> output = result(codigo, afns);
+        // Se pregunta la ruta y esribe
+        System.out.println("Ingrese la ruta de escritura del archivo: ");
+
+        String ruta3 = sc.nextLine();
+        escribirArchivo(output, ruta3);
+        
         for (int i = 0; i < output.size(); i++) {
             System.out.println(output.get(i));
         }
