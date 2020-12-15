@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package galun;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,6 +15,8 @@ import automatas.*;
 import static automatas.AFN.*;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +29,6 @@ public class GALUN {
     /**
      * @param args the command line arguments
      */
-    
     public static void main(String[] args) {
         //File input=new File("input"); Proyecto en blanco
         //System.out.print(input.getAbsolutePath());
@@ -37,19 +39,18 @@ public class GALUN {
         System.out.println("Ingrese la ruta del primer input: ");
 
         String ruta1 = sc.nextLine();
-        
+
         System.out.println("Ingrese la ruta del segundo input: ");
 
         String ruta2 = sc.nextLine();
-        
+
         ArrayList<AFN> afns = leerArchivo(ruta1);
         List<String> codigo = leerCodigo(ruta2);
-        List<String> output = result(codigo,afns);
-        for(int i =0; i<output.size();i++){
+        List<String> output = result(codigo, afns);
+        for (int i = 0; i < output.size(); i++) {
             System.out.println(output.get(i));
         }
-        
-        
+
         /*       EJEMPLO       */
         //Ejemplos de expresiones de entrada
         /*
@@ -80,8 +81,9 @@ public class GALUN {
         for(int i =0; i<output.size();i++){
             System.out.println(output.get(i));
         }
-        */
+         */
     }
+
     public static ArrayList<AFN> leerArchivo(String ruta) {
         ArrayList<AFN> afns = new ArrayList<>();
         List<String> lineasArchivo = new ArrayList<>();
@@ -103,6 +105,27 @@ public class GALUN {
             String linea;
 
             while ((linea = br.readLine()) != null) {
+                if (linea.contains("[a-z]")) {
+                    String az = "([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])";
+                    lineasArchivo.add(az);
+                   
+
+                } else if (linea.contains("[a-z]*")) {
+                    String az2 = "([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])*";
+                    lineasArchivo.add(az2);
+                    
+                }else if (linea.contains("[0-9]*")) {
+                    String num2 = "([0]|[1]|[2]|[3]|[4]|[5]|[6]|[7]|[8]|[9])*";
+                    lineasArchivo.add(num2);
+                    
+                } else if (linea.contains("[0-9]")) {
+                    String num = "([0]|[1]|[2]|[3]|[4]|[5]|[6]|[7]|[8]|[9])";
+                    lineasArchivo.add(num);
+                } else {
+                    System.out.println(linea);
+                   
+                    lineasArchivo.add(linea); // añade archivo a la lista 
+                }
 
                 lineasArchivo.add(linea); // añade archivo a la lista 
             }
@@ -122,113 +145,113 @@ public class GALUN {
             }
         }
         for (int i = 0; i < lineasArchivo.size(); i++) {
-           AFN newAFN=syntax(lineasArchivo.get(i));
-           newAFN.setToken("a1");
-           afns.add(newAFN);
+            AFN newAFN = syntax(lineasArchivo.get(i));
+            newAFN.setToken("a1");
+            afns.add(newAFN);
         }
         return afns;
-    }    
-    public static AFN syntax(String in){
-        String derecha="";
-        String izquierda="";
-        String a="";
-        for (int j = 0; j < in.length(); j++){
-            int parcount=0;
-            if(in.charAt(j)=='('){
+    }
+
+    public static AFN syntax(String in) {
+        String derecha = "";
+        String izquierda = "";
+        String a = "";
+        for (int j = 0; j < in.length(); j++) {
+            int parcount = 0;
+            if (in.charAt(j) == '(') {
                 parcount++;
                 j++;
-                while(true){
-                    if(j==in.length()){
+                while (true) {
+                    if (j == in.length()) {
                         break;
-                    }else if(String.valueOf(in.charAt(j)).equals("(")){
-                        a=a+String.valueOf(in.charAt(j));
+                    } else if (String.valueOf(in.charAt(j)).equals("(")) {
+                        a = a + String.valueOf(in.charAt(j));
                         parcount++;
-                    }else if(String.valueOf(in.charAt(j)).equals(")")){
-                        if(parcount==1){
-                           izquierda=a;
-                           a="";
-                           break;
-                        }else{
-                            a=a+String.valueOf(in.charAt(j));
+                    } else if (String.valueOf(in.charAt(j)).equals(")")) {
+                        if (parcount == 1) {
+                            izquierda = a;
+                            a = "";
+                            break;
+                        } else {
+                            a = a + String.valueOf(in.charAt(j));
                             parcount--;
                         }
-                    }
-                    else{
-                        a=a+String.valueOf(in.charAt(j));//concatena palabra
+                    } else {
+                        a = a + String.valueOf(in.charAt(j));//concatena palabra
                     }
                     j++;
                 }
-              
-                if(j==in.length()-1){
+
+                if (j == in.length() - 1) {
                     return syntax(izquierda);
-                }else{
+                } else {
                     j++;
                     switch (in.charAt(j)) {
                         case '*':
-                            if(j==in.length()-1){
+                            if (j == in.length() - 1) {
                                 return kleene(syntax(izquierda));
-                            }else{
+                            } else {
                                 j++;
-                                if(in.charAt(j)=='&'){
-                                    derecha=in.substring(j+1);
-                                    return conjuncion(kleene(syntax(izquierda)),syntax(derecha));
-                                }else if(in.charAt(j)=='|'){
-                                    derecha=in.substring(j+1);
-                                    return disyuncionAFN(kleene(syntax(izquierda)),syntax(derecha));
+                                if (in.charAt(j) == '&') {
+                                    derecha = in.substring(j + 1);
+                                    return conjuncion(kleene(syntax(izquierda)), syntax(derecha));
+                                } else if (in.charAt(j) == '|') {
+                                    derecha = in.substring(j + 1);
+                                    return disyuncionAFN(kleene(syntax(izquierda)), syntax(derecha));
                                 }
-                            }   break;
+                            }
+                            break;
                         case '&':
-                            derecha=in.substring(j+1);
-                            return conjuncion(syntax(izquierda),syntax(derecha));
+                            derecha = in.substring(j + 1);
+                            return conjuncion(syntax(izquierda), syntax(derecha));
                         case '|':
-                            derecha=in.substring(j+1);
-                            return disyuncionAFN(syntax(izquierda),syntax(derecha));
+                            derecha = in.substring(j + 1);
+                            return disyuncionAFN(syntax(izquierda), syntax(derecha));
                         default:
                             break;
                     }
                 }
             }
-            if(in.charAt(j)=='['){
+            if (in.charAt(j) == '[') {
                 j++;
-                while(true){
-                        if(j==in.length()){
-                            break;
-                        }        
-                        else if(String.valueOf(in.charAt(j)).equals("]")){
-                           izquierda=a;
-                           a="";
-                           break;
-                        }
-                        else{
-                            a=a+String.valueOf(in.charAt(j));//concatena palabra
-                        }
-                     j++;
+                while (true) {
+                    if (j == in.length()) {
+                        break;
+                    } else if (String.valueOf(in.charAt(j)).equals("]")) {
+                        izquierda = a;
+                        a = "";
+                        break;
+                    } else {
+                        a = a + String.valueOf(in.charAt(j));//concatena palabra
+                    }
+                    j++;
                 }
-                if(j==in.length()-1){
+                if (j == in.length() - 1) {
                     System.out.println(j);
                     return fromString(izquierda);
-                }else{
+                } else {
                     j++;
                     switch (in.charAt(j)) {
                         case '*':
-                            if(j==in.length()-1){
+                            if (j == in.length() - 1) {
                                 return kleene(fromString(izquierda));
-                            }else{
+                            } else {
                                 j++;
-                                if(in.charAt(j)=='&'){
-                                    derecha=in.substring(j+1);
-                                    return conjuncion(kleene(fromString(izquierda)),syntax(derecha));
-                                }else if(in.charAt(j)=='|'){
-                                    derecha=in.substring(j+1);
-                                    return disyuncionAFN(kleene(fromString(izquierda)),syntax(derecha));
+                                if (in.charAt(j) == '&') {
+                                    derecha = in.substring(j + 1);
+                                    return conjuncion(kleene(fromString(izquierda)), syntax(derecha));
+                                } else if (in.charAt(j) == '|') {
+                                    derecha = in.substring(j + 1);
+                                    return disyuncionAFN(kleene(fromString(izquierda)), syntax(derecha));
                                 }
-                            }   break;
+                            }
+                            break;
                         case '&':
-                            derecha=in.substring(j+1);
-                            return conjuncion(fromString(izquierda),syntax(derecha));
+                            derecha = in.substring(j + 1);
+                            return conjuncion(fromString(izquierda), syntax(derecha));
                         case '|':
-                            derecha=in.substring(j+1);
-                            return disyuncionAFN(fromString(izquierda),syntax(derecha));
+                            derecha = in.substring(j + 1);
+                            return disyuncionAFN(fromString(izquierda), syntax(derecha));
                         default:
                             break;
                     }
@@ -237,6 +260,7 @@ public class GALUN {
         }
         return null;
     }
+
     public static List<String> leerCodigo(String ruta) {
         List<String> lineasArchivo = new ArrayList<>();
         List<String> palabras = new ArrayList<>();
@@ -257,7 +281,9 @@ public class GALUN {
             String linea;
 
             while ((linea = br.readLine()) != null) {
+
                 lineasArchivo.add(linea); // añade archivo a la lista 
+
             }
 
         } catch (Exception e) {
@@ -273,57 +299,84 @@ public class GALUN {
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
-            
-            
+
             System.out.println("archivo leído");
-            
+
         }
-        palabras=ReadLine(lineasArchivo);
+        palabras = ReadLine(lineasArchivo);
         return palabras;
     }
-    public static List<String> ReadLine(List<String> lineasArchivo){
-        List<String> palabras= new ArrayList<>();
-        int length =  lineasArchivo.size();
-        for(int i =0;i<length;i++){
+
+    public static List<String> ReadLine(List<String> lineasArchivo) {
+        List<String> palabras = new ArrayList<>();
+        int length = lineasArchivo.size();
+        for (int i = 0; i < length; i++) {
             String string = lineasArchivo.get(i);
             String sep = "\\s+";
             String[] parts = string.trim().split(sep);
-            for(int j =0;j<parts.length;j++){
-                String a= parts[j];
+            for (int j = 0; j < parts.length; j++) {
+                String a = parts[j];
                 palabras.add(a);
             }
         }
-        Set<String> set = new LinkedHashSet<>();  
-        set.addAll(palabras); 
-        palabras.clear(); 
+        Set<String> set = new LinkedHashSet<>();
+        set.addAll(palabras);
+        palabras.clear();
         palabras.addAll(set);
         return palabras;
     }
-    public static List<String> result(List<String> palabras,ArrayList<AFN> afns){
+
+    public static List<String> result(List<String> palabras, ArrayList<AFN> afns) {
         List<String> listaA = new ArrayList<>();
-        int nafns=afns.size();
-        int npalabras=palabras.size();
-        boolean si=false;
-        for(int i =0;i<npalabras;i++){
-            for(int j =0;j<nafns;j++){
+        int nafns = afns.size();
+        int npalabras = palabras.size();
+        boolean si = false;
+        for (int i = 0; i < npalabras; i++) {
+            for (int j = 0; j < nafns; j++) {
                 AFN actual = afns.get(j);
-                if(actual.acepta(palabras.get(i))){
-                    String str =String.join(" = ",palabras.get(i),actual.token);
+                if (actual.acepta(palabras.get(i))) {
+                    String str = String.join(" = ", palabras.get(i), actual.token);
                     listaA.add(str);
-                    si=true;
+                    si = true;
                     break;
-                }else{
-                    si=false;
+                } else {
+                    si = false;
                 }
-                
+
             }
-            if(!si){
-                String str =String.join(" = ",palabras.get(i),"ERROR: No definido");
+            if (!si) {
+                String str = String.join(" = ", palabras.get(i), "ERROR: No definido");
                 listaA.add(str);
-                si=false;
+                si = false;
             }
-            
+
         }
         return listaA;
+    }
+
+    public static void escribirArchivo(List<String> lista, String ruta) {
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(ruta + "output.txt");
+            pw = new PrintWriter(fichero);
+
+            for (int i = 0; i < lista.size(); i++) {
+                pw.println(lista.get(i));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Nuevamente aprovechamos el finally para 
+                // asegurarnos que se cierra el fichero.
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
     }
 }

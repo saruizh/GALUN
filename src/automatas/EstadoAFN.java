@@ -41,65 +41,57 @@ public class EstadoAFN {
 /*
 */
 /*
- * When matching, we work character by character.
+ * Cuando emparejamos trabajamos caracter por caracter 
  *
- * If we're out of characters in the string, we'll check to
- * see if this state if final, or if we can get to a final
- * state from here through empty edges.
+ * Si no hay caracteres en la cadena,comprbaremos sieste este un estado de aceptacion
+ * o si podemos llegar a un estado de aceptacion por medi de transicoines lambda 
  *
- * If we're not out of characters, we'll try to consume a
- * character and then match what's left of the string.
+ * Si aun tenemos caracteres, intentamos consumir caracter a caracter
+ * y la cadena restante
  *
- * If that fails, we'll ask if empty-edge neighbors can match
- * the entire string.
+ * Si falla, preguntamos a los nodos vecinos si pueden comsumir la cadena 
  *
- * If that fails, the match fails.
+ * Si eso falla, el emparejamiento falla.
  *
- * Note: Because we could have a circular loop of empty
- * transitions, we'll have to keep track of the states we
- * visited through empty transitions so we don't end up
- * looping forever.
+ * 
  */
-   /* We've found a path back to ourself through empty edges;
+   /* Hemos encontrado un camino de regreso a nosotras mismas a través de nodos vacíos;
      * stop or we'll go into an infinite loop. */
     //
         if (sVisitados.contains(this)){
             return false ;
         }
-/* In case we make an empty transition, we need to add this
- * state to the visited list. */
+/* En caso de que se haga una transicion vacia, tenemos que añadir el estado a los estados visitados
+  
+        . */
         sVisitados.add(this) ;
         if (s.length() == 0) {
-/* The string is empty, so we match this string only if
-* this state is a final state, or we can reach a final
-* state without consuming any input. */
+/* El string esta vacio asi que podemos emparejar el estado del string solo si es un estado final
+* o podemos alcanzar un estado final sin consumir ninguna entrada
+      */
             if (aceptacion) return true ;
-/* Since this state is not final, we'll ask if any
-* neighboring states that we can reach on empty edges can
-* match the empty string. */
+/* Dado que este estado no es final, preguntaremos si algún estado vecino que podamos alcanzar 
+            en los nodos vacíos puede coincidir con la cadena vacía. */
             for (EstadoAFN next : lambda) {
                 if (next.matches("",sVisitados))
                 return true ;
             }
         return false ;
         } else {
-    /* In this case, the string is not empty, so we'll pull
-     * the first character off and check to see if our
-     * neighbors for that character can match the remainder of
-     * the string. */
+    /* En este caso el string no esta vacio, asi que podemos sacar le primer caracter y mirar 
+            si los vecinos de ese caracter pueden emparejarse con el resto de la cadena 
+            */
         int c = (int)s.charAt(0) ;
 
         for (EstadoAFN next : transicion[c]) {
             if (next.matches(s.substring(1)))
             return true ;
         }
-    /* It looks like we weren't able to match the string by
-     * consuming a character, so we'll ask our
-     * empty-transition neighbors if they can match the entire
-     * string. */
+    /* Aqui no podemos hacer que se empareje la cadena consumiendo un carácter, por lo que preguntaremos a
+        nuestros vecinos de transición vacía si pueden hacer emparejar toda la cadena.. */
         for (EstadoAFN next : lambda) {
             if (next.matches(s,sVisitados))
-            return true ;
+            return true ;   
         }
         return false ;
         }
