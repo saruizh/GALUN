@@ -73,6 +73,8 @@ public class GALUN {
             String linea;
 
             while ((linea = br.readLine()) != null) {
+                if(!linea.isEmpty())
+                {
                 if (linea.contains("[a-z]")) {
                     lineasArchivo.add(linea.replace("[a-z]","([a]|[b]|[c]|[d]|[e]|[f]|[g]|[h]|[i]|[j]|[k]|[l]|[m]|[n]|[o]|[p]|[q]|[r]|[s]|[t]|[u]|[v]|[x]|[y]|[w]|[z])"));
                 }else if (linea.contains("[A-Z]")) {
@@ -82,6 +84,7 @@ public class GALUN {
                 } else {
                     lineasArchivo.add(linea); // añade archivo a la lista 
                 } 
+            }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,20 +100,26 @@ public class GALUN {
                 e2.printStackTrace();
             }
         }
-        for (int i = 0; i < lineasArchivo.size(); i++) {
+          for (int i = 0; i < lineasArchivo.size(); i++) {
            String safn=lineasArchivo.get(i);
            String sep = "//";
            String[] parts = safn.trim().split(sep);
            AFN newAFN=syntax(parts[0].trim());
-           if(parts[1].contains("retornar")){
+           try{
+           if(parts[1].trim().toLowerCase().contains("retornar")){
                String[] part = parts[1].trim().split("\\s+");
                newAFN.setToken(part[1]);
                if(part[1].equals("comentario")){
-                   
+
                }
            }else{
                System.out.println("Token definido incorrectamente");
            }
+           }
+           catch(Exception ex){
+               newAFN.setToken("Token no definido");
+           }
+           
            
            afns.add(newAFN);
         }
